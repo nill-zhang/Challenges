@@ -15,32 +15,13 @@ import (
 //Output: N = 10001001100
 //Hints: #137, #769, #215
 
-func Insertion(M,N,j,i int) int{
+func Insertion(M,N,j int) int{
 
 	return N | M << uint(j)
 
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-//5.2 Binary to String: Given a real number between O and 1 (e.g., 0.72) that is passed in as a double, print
-//the binary representation. If the number cannot be represented accurately in binary with at most 32
-//characters, print "ERROR:'
-//Hints: #743, #767, #7 73, #269, #297
-
-
-
-
 
 // You have an integer and you can flip exactly one bit from a 0 to a 1. Write code to
 // find the length of the longest sequence of ls you could create.
@@ -91,12 +72,12 @@ func FlipToWin(x int) int{
 
 	max := sections[0]
 	for j:=1;j<len(sections);j++{
+		// find the longest sum of two sections
 		if sections[j]+sections[j-1] > max {
 			max = sections[j]+sections[j-1]
 		}
 	}
-	// add two sections of consecutive 1s and that 0 we can
-	// flip to 1
+	// besides the 1s, don't forget the 0 in the middle
 	return max + 1
 
 
@@ -105,31 +86,21 @@ func FlipToWin(x int) int{
 
 }
 
-
-
-
-//5.4 Next Number: Given a positive integer, print the next smallest and the next largest number that
-//have the same number of 1 bits in their binary representation.
-//Hints: #747, #7 75, #242, #372, #339, #358, #375, #390
-
-
-
-
-
-//5.6 Conversion: Write a function to determine the number of bits you would need to flip to convert
-//integer A to integer B.
-//EXAMPLE
-//Input: 29 (or: 11101), 15 (or: 01111)
-//Output: 2
-//Hints: #336, #369
-//pg286
+// 5.6 Conversion: Write a function to determine the number of bits you would need to flip to convert
+// integer A to integer B.
+// EXAMPLE
+// Input: 29 (or: 11101), 15 (or: 01111)
+// Output: 2
+// Hints: #336, #369
+// pg286
 
 // BitsForAToB returns the number of bits need to be flipped to convert A to B
 func BitsForAToB(x, y int) int{
-	// when the according bits need to be converted is they are
-	// opposite of each other, so first we can xor the x and y
+
+	// bits that need to be converted is where they are
+	// opposite of each other, so first we can xor x and y
 	// the 1s in the result is how many bits need to be flipped
-	// I then call Count to get the number
+	// then call Count to get the number of 1s in the result integer
 
 	_, num, _ := Count(x ^ y)
 	return num
@@ -137,22 +108,6 @@ func BitsForAToB(x, y int) int{
 }
 
 
-
-//5.7 Pairwise Swap: Write a program to swap odd and even bits in an integer with as few instructions as
-//possible (e.g., bit 0 and bit 1 are swapped, bit 2 and bit 3 are swapped, and so on).
-//Hints: #745, #248, #328, #355
-//. ... .... . . . . pg 286
-
-
-
-
-//5.8 Draw Line: A monochrome screen is stored as a single array of bytes, allowing eight consecutive
-//pixels to be stored in one byte. The screen has width w, where w is divisible by 8 (that is, no byte will
-//be split across rows). The height of the screen, of course, can be derived from the length of the array
-//and the width. Implement a function that draws a horizontal line from ( xl, y) to ( x2, y).
-//The method signature should look something like:
-//drawline(byte[] screen, int width, int xl, int x2, int y)
-//Hints: #366, #387, #384, #397
 
 // SetBit sets the bit at the position of x's binary form
 func SetBit(x int, position uint) int{
@@ -180,9 +135,9 @@ func ClearBit(x int, position uint) int{
 
 
 }
-// right shift
-// or 1 leftshift
-// isBitSet checks if x's position is set
+// right shift x
+// or leftshift 1
+// isBitSet checks if x's position is set to 1
 func isBitSet(x int, position uint) bool{
 
 	return ((x >> position) & 1) == 1
