@@ -42,13 +42,68 @@ func Insertion(M,N,j,i int) int{
 
 
 
-//5.3 Flip Bit to Win: You have an integer and you can flip exactly one bit from a 0 to a 1. Write code to
-//find the length of the longest sequence of ls you could create.
-//EXAMPLE
-//Input: 1775
-//Output: 8
-//(or: 11011101111)
-//Hints: #759, #226, #374, #352
+// You have an integer and you can flip exactly one bit from a 0 to a 1. Write code to
+// find the length of the longest sequence of ls you could create.
+// EXAMPLE
+// Input: 1775
+// Output: 8
+// (or: 11011101111)
+
+
+// FlipToWin flips one and only one 0 bit of a integer x, and return
+// the longest 1s it get
+func FlipToWin(x int) int{
+
+	_,_,msb := Count(x)
+	// sections stores counters
+	sections :=[]int{}
+	// counter stores how many consecutive 1s are encountered
+	counter := 0
+	// if x is zero, early return
+	// msb:Most Significant bit
+	if msb ==  -1 {
+		return 1
+	}
+	for i:=0;i<=msb;i++{
+                // two things here:
+		// 1. counter will do self-addition until current bit is not set
+		// so, don' forget continue
+		// 2. when the msb is 1, you will leave the loop without update the sections
+		// update it outside the loop by checking counter recently increased or not
+		if isBitSet(x,uint(i)){
+			counter++
+			continue
+
+		}
+		// reset counter
+		sections =  append(sections,counter)
+		counter = 0
+	}
+	// if counter self-adds all the way up until msb(inclusive) which means x is all 1s
+	// the longest 1s we can get by swapping 0 to 1 is x itself
+	if counter == msb+1{
+		return counter
+	}
+
+	if counter != 0{
+		sections =  append(sections,counter)
+	}
+
+	max := sections[0]
+	for j:=1;j<len(sections);j++{
+		if sections[j]+sections[j-1] > max {
+			max = sections[j]+sections[j-1]
+		}
+	}
+	// add two sections of consecutive 1s and that 0 we can
+	// flip to 1
+	return max + 1
+
+
+
+
+
+}
 
 
 
@@ -76,7 +131,7 @@ func BitsForAToB(x, y int) int{
 	// the 1s in the result is how many bits need to be flipped
 	// I then call Count to get the number
 
-	_, num := Count(x ^ y)
+	_, num, _ := Count(x ^ y)
 	return num
 
 }
@@ -112,7 +167,7 @@ func GetBit(x int, position uint) int{
 
 }
 
-// FlipBit switch the bit at the position of x's binary string form
+// FlipBit switches the bit at the position of x
 func FlipBit(x int, position uint) int{
 	return x ^ (1<<position)
 
@@ -130,7 +185,7 @@ func ClearBit(x int, position uint) int{
 // isBitSet checks if x's position is set
 func isBitSet(x int, position uint) bool{
 
-	return ((x >>(position-1)) & 1) == 1
+	return ((x >> position) & 1) == 1
 
 
 }
@@ -154,29 +209,30 @@ func ClearBitsIThrough0(x int, i uint) int{
 
 }
 
-func Count(x int) (num0,num1 int){
-	PreMSB := uint(0)
+func Count(x int) (num0,num1,MSB int){
+	PostMSB := uint(0)
 
 	// get the Most Significant bit
 	for {
-		y := 1 << PreMSB
+		y := 1 << PostMSB
 		if y > x{
 			break
 		}
-		PreMSB++
+		PostMSB++
 		//
 	}
         //  Watch out, i must convert PreMSB-1 to int type
 	// because if I don't,j will be type of unsigned integer, which is always positive
 	// so the for loop will not break
 	// j starts with the MSB
-	for j:=int(PreMSB-1);j>=0;j--{
+	for j:=int(PostMSB-1);j>=0;j--{
 		if x & (1 << uint(j)) == (1 << uint(j)){
 			num1++
 			continue
 		}
 		num0++
 	}
+	MSB = int(PostMSB-1)
 	return
 
 
@@ -184,12 +240,19 @@ func Count(x int) (num0,num1 int){
 
 func main(){
 
-	cnt0,cnt1 := Count(243)
+	cnt0,cnt1,_ := Count(243)
 	fmt.Printf("Number of 0S:%v,Number of 1s:%v\n",cnt0,cnt1)
-	cnt0,cnt1 = Count(8)
+	cnt0,cnt1,_ = Count(8)
 	fmt.Printf("Number of 0S:%v,Number of 1s:%v\n",cnt0,cnt1)
 
 	fmt.Printf("Bits need to be flipped:%v\n",BitsForAToB(29,15))
 	fmt.Printf("Before Insertion: %b\n After Insertion: %b\n",2048,Insertion(19,2048,2,0))
+	fmt.Printf("Number of longest 1s if swap one 0 --> 1: %v(%#b)\n",FlipToWin(1775),1775)
+	fmt.Printf("Number of longest 1s if swap one 0 --> 1: %v(%#b)\n",FlipToWin(0),0)
+	fmt.Printf("Number of longest 1s if swap one 0 --> 1: %v(%#b)\n",FlipToWin(1),1)
+	fmt.Printf("Number of longest 1s if swap one 0 --> 1: %v(%#b)\n",FlipToWin(255),255)
+	fmt.Printf("Number of longest 1s if swap one 0 --> 1: %v(%#b)\n",FlipToWin(56),56)
+	fmt.Printf("Number of longest 1s if swap one 0 --> 1: %v(%#b)\n",FlipToWin(556),556)
+	fmt.Printf("Number of longest 1s if swap one 0 --> 1: %v(%#b)\n",FlipToWin(85962),85962)
 
 }
