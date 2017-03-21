@@ -5,19 +5,20 @@ import (
 	"math"
 	"strconv"
 	"unicode/utf8"
+	"strings"
 )
 
 
 //check a string has all unique characters
 func IsUnique(str string)bool{
 	// O(N)
-	// use a dictionary to map character and its occurences in string
+	// use a dictionary to map characters and its occurrences
 	counter := map[rune]int{}
 	for _,j := range str{
 		counter[j]++
 	}
 	fmt.Printf("len(str):%v\tlen(count):%v\n",len([]rune(str)),len(counter))
-        // if the str has all unique unicode characters, its counter will
+        // if the str has all unique unicode characters, its element counter will
 	// has the same amount of elements(no characters have more than two counts)
         return	len(counter) == len([]rune(str))
 
@@ -26,6 +27,7 @@ func IsUnique(str string)bool{
 
 // check if stringA  is a permutation of stringB
 func isPermutationOf(strA,strB string) bool{
+	// O(A+B)
 	// early return
 	if len([]rune(strA)) != len([]rune(strB)){
 		return false
@@ -52,40 +54,58 @@ func isPermutationOf(strA,strB string) bool{
 	return true
 }
 
+// FindPermutation finds all strA's permutation in strB,return its indices
+func FindPermutation(strA,strB string)[]int{
+        outputIndices := []int{}
+	counterA := map[rune]int{}
+	lengthA := len([]rune(strA))
+	for _,v := range strA{
 
-func FindPermutation(strA,strB string){
-	//b := make(map[rune]int)
-	//a := make(map[int]map[rune]int)
-	//for i,j :=range strB{
-	//	b[strB[i]] ++
-	//	b[strB[i+1]] ++
-	//	b[strB[i+2]] ++
-	//	b[strB[i+3]] ++
-	//	a[i] = strB[i:i+4]
-	//
-	//
-	//}
+		counterA[v]++
+	}
+	span := []int{}
+        for i,v := range strB{
+		if counterA[v] == 0{
+			span = append(span,i)
+		}
+	}
+	span = append(span,lengthA)
+
+	for j:=0;j<len(span)-1;j++{
+		if span[j+1] - span[j]-1 < lengthA{
+			continue
+		}
+		for i := span[j]+1;i+lengthA-1<span[j+1];i++{
+
+			counterTemp := map[rune]int{}
+
+			for _,v := range strB[i:i+lengthA]{
+			     counterTemp[v]++
+
+			}
+			permu := true
+			for key,_ := range counterTemp{
+				if counterTemp[key] != counterA[key]{
+					permu = false
+					break
+				}
+
+			}
+			if permu {
+				outputIndices = append(outputIndices, i)
+			}
+		}
 
 
 
 
+
+
+	}
+	return outputIndices
 
 }
 
-//Write a method to replace all spaces in a string with '%20'. You may assume that the string
-//has sufficient space at the end to hold the additional characters, and that you are given the "true"
-//length of the string. (Note: If implementing in Java, please use a character array so that you can
-//perform this operation in place.)
-//EXAMPLE
-//Input: "Mr John Smith ", 13
-//Output: "Mr%20John%20Smith"
-
-func URLify(){
-
-
-
-
-}
 
 //Palindrome Permutation: Given a string, write a function to check if it is a permutation of a palindrome.
 //A palindrome is a word or phrase that is the same forwards and backwards. A permutation
@@ -96,6 +116,7 @@ func URLify(){
 //Input: Tact Coa
 //Output: True (permutations: "taco cat", "atco eta", etc.)
 func isPalindromePermutation(str string) bool{
+	// O(N)
 	counter := make(map[rune]int)
 	// oddCounter stores characters that appear odd times in str
 	// for a str to be palindrome, the number of these characters
@@ -106,7 +127,6 @@ func isPalindromePermutation(str string) bool{
 		counter[j]++
 
 	}
-	fmt.Println(counter)
 	for _,value := range counter{
 
 		if value % 2 == 1{
@@ -165,6 +185,7 @@ func OneAway(strA, strB string) bool{
 //"compressed" string would not become smaller than the original string, your method should return
 //the original string. You can assume the string has only uppercase and lowercase letters (a - z).
 func Compress(str string)string{
+	// O(N)
 	// added unicode support
 	outputstr := ""
 	if len(str) == 0{
@@ -210,9 +231,40 @@ func Compress(str string)string{
 //Rotate Matrix: Given an image represented by an NxN matrix, where each pixel in the image is 4
 //bytes, write a method to rotate the image by 90 degrees. Can you do this in place?
 func RotateMatrix(){
+	// O(N2)
+	const N = 5
+	img := [N][N]rune{[N]rune{0,0,0,0,0},
+		         [N]rune {1,1,1,1,1},
+		         [N]rune{2,2,2,2,2},
+		         [N]rune{3,3,3,3,3},
+	                 [N]rune{4,4,4,4,4}}
 
 
 
+     	for i:=0;i<N;i++{
+		fmt.Println(img[i])
+	}
+	for i:=0;i<N;i++{
+
+		// J must start with i, if j starts from 0, you do nothing
+		// you reverse what you have swapped
+		for j:=i;j<N;j++{
+			img[i][j],img[j][i] = img[j][i],img[i][j]
+		}
+
+	}
+
+	for i:=0;i<N;i++{
+		// swap symmetric columns
+		for j:=0;j<N/2;j++{
+			img[i][j],img[i][N-1-j] = img[i][N-1-j],img[i][j]
+		}
+
+	}
+	fmt.Println(strings.Repeat("*",180))
+	for i:=0;i<N;i++{
+		fmt.Println(img[i])
+	}
 
 }
 
@@ -221,17 +273,58 @@ func RotateMatrix(){
 //column are set to 0.
 
 func ZeroMatrix(){
+	array := [][]int{[]int{1,1,1,1,1,3,0,1},
+		         []int{2,2,2,2,2,2,2,2},
+		         []int{3,3,3,3,3,3,3,3},
+	                 []int{4,4,4,4,4,5,6,7}}
+        i,j := 0,0
+	// keep i,j'scope out of for loop for later use
+	for ;i<len(array);i++{
+		for ;j<len(array[0]);j++{
+			if array[i][j] == 0{
+				// get out of inner and outer for loop
+				goto next
+			}
+		}
 
+	}
 
+        next:
+		for l:=0;l<len(array[0]);l++{
+			array[i][l] = 0
+		}
+
+		for m:=0;m<len(array);m++{
+			array[m][j] = 0
+		}
+		for ;i<len(array);i++{
+			fmt.Println(array[i])
+		}
 
 }
 
 
-//String Rotation:Assumeyou have a method isSubstringwhich checks if one word is a substring
+//String Rotation:Assume you have a method isSubstring which checks if one word is a substring
 //of another. Given two strings, sl and s2, write code to check if s2 is a rotation of sl using only one
 //call to isSubstring (e.g., "waterbottle" is a rotation of"erbottlewat").
-func RotateString(){
+func isRotatedString(s2,s1 string)bool{
+	// O(N)
+	// early return
+	if s1==s2{
+		return true
+	}
+	i:= 0
+	for ;i< len(s1);i++{
+		// find longest prefix substring of s1 that is a
+		// substring of s2, stops at i-1
+		if !strings.Contains(s2,s1[:i]){
+			break
+		}
 
+
+	}
+        // test the rest
+	return s1[i-1:] == s2[:len(s2)-i+1]
 
 
 
@@ -272,12 +365,20 @@ func string_test(){
         for _, str := range compressStrs{
 		p("Before: \033[35m%v\033[0m After compression: \033[33m%v\033[0m\n",str,Compress(str))
 	}
+
+	ZeroMatrix()
+	p("%t\n",isRotatedString("alexisavery","isaveryalex"))
+	p("%t\n",isRotatedString("alexisavery","averyalexis"))
+	p("%t\n",isRotatedString("alexisavery","veryalexisa"))
+	p("%t\n",isRotatedString("alexisavery","yalexisaver"))
+	RotateMatrix()
+	p("%v\n",FindPermutation("abbc","cbabadcbbabbcbabaabccbabc"))
 }
 
 func main(){
 
 
-
+	string_test()
 
 
 }
