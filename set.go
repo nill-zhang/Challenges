@@ -20,7 +20,7 @@ func (s *IntSet)Len() uint64{
 
 }
 
-
+// UnionWith populates s with elements from s and snd
 func (s *IntSet)UnionWith(snd IntSet){
 
 	if len(s.set) <= len(snd.set){
@@ -38,7 +38,7 @@ func (s *IntSet)UnionWith(snd IntSet){
 		}
 }
 
-
+// IntersectWith populates s with those elements which is in s and also in snd
 func (s *IntSet)IntersectWith(snd IntSet){
 	if len(s.set) <= len(snd.set){
 		for i:=0;i<len(s.set);i++{
@@ -55,7 +55,7 @@ func (s *IntSet)IntersectWith(snd IntSet){
 		}
 }
 
-
+// DifferenceWith populates s with elements in s not in snd
 func (s *IntSet)DifferenceWith(snd IntSet){
 
 	if len(s.set) <= len(snd.set){
@@ -70,7 +70,7 @@ func (s *IntSet)DifferenceWith(snd IntSet){
 		}
 }
 
-
+// SymmetricDifference populates s with elements in s not in snd, and elements in snd not in s
 func (s *IntSet)SymmetricDifference(snd IntSet){
 	if len(s.set) <= len(snd.set){
 		for i:=0;i<len(s.set);i++{
@@ -96,7 +96,7 @@ func (s *IntSet)AddAll(sets ...IntSet){
 	}
 }
 
-
+// Remove returns true and removes element nm if it exists
 func (s *IntSet)Remove(nm uint64) bool{
         if s.Has(nm){
 
@@ -107,6 +107,7 @@ func (s *IntSet)Remove(nm uint64) bool{
 }
 
 
+// Clear wipe off all the set elements
 func (s *IntSet)Clear(){
 
 	for i:=0;i<len(s.set);i++{
@@ -114,7 +115,7 @@ func (s *IntSet)Clear(){
 	}
 }
 
-
+// Copy returns a copy of set s
 func (s *IntSet)Copy() *IntSet{
 	cp := make([]uint64, len(s.set))
 	copy(cp, s.set)
@@ -122,6 +123,7 @@ func (s *IntSet)Copy() *IntSet{
 
 }
 
+// Elem gives all the set elements in a slice
 func (s *IntSet)Elem() (res []uint64){
 
 	for i:=0;i<len(s.set);i++{
@@ -136,7 +138,7 @@ func (s *IntSet)Elem() (res []uint64){
 
 }
 
-
+// Add adds a new element to the set
 func (s *IntSet)Add(nu uint64){
 
 
@@ -150,7 +152,7 @@ func (s *IntSet)Add(nu uint64){
 
 }
 
-
+// Has checks whether a given number is in set s
 func (s *IntSet)Has(nu uint64) bool{
 
 	if nu/64 > uint64(len(s.set)-1){
@@ -166,7 +168,8 @@ func (s *IntSet)Has(nu uint64) bool{
 
 
 
-
+// String satisfies Stringer interface, when fmt package operate on
+// set s, this string method will be used to give a string representation of set s
 func (s *IntSet)String() string{
 
 	var buf bytes.Buffer
