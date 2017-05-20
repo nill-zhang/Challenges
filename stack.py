@@ -100,8 +100,46 @@ def stack_test():
         print("too many elements to pop, stack is empty!")
 
 
+def parenthesis_checker(string):
+    sign_str = '()[]{}<>\'\'\"\"'
+    sign_dict = dict(zip(sign_str[1::2], sign_str[::2]))  # store right sign as key and left sign as value
+    print(sign_dict)
+    s = Stack(len(string))     # initialize a stack with the size of the target string
+    for char in string:
+        if not (char in sign_dict.keys() or
+                char in sign_dict.values()):   # skip uninterested characters
+
+            continue
+        else:
+            try:
+                if char in sign_dict.values():
+                    s.push(char)
+                    print("pushed ", char)
+                else:
+                    left = s.pop()
+                    print(char)
+                    if left != sign_dict[char]:
+                        print("!", left)
+                        return False
+                    print(left)
+            except StackError:
+                return False
+    return s.is_empty()
+
+
+def parenthesis_checker_test():
+    text1 = "sf83 jfsf3ui232u\'\'9r843y8p@#$%\"\"^&*()()sfekf[[][]]{<<<{}>>>}"
+    text2 = "<><>S43r3dsd32r#$*(78900----99-0++==)"
+    print("text1 is balanced") if parenthesis_checker(text1) else print("no")
+    print("text2 is balanced") if parenthesis_checker(text2) else print("no")
+
+
 if __name__ == "__main__":
     stack_test()
+    parenthesis_checker_test()
+
+
+
 
 # |    51    |
 # |__________|
